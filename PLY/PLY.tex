@@ -1,0 +1,246 @@
+\documentclass[pdf]{beamer}
+\usetheme{Rochester}
+\beamertemplatenavigationsymbolsempty
+\usepackage[utf8]{inputenc}
+\usepackage{ragged2e} % \justifying
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+\usepackage{upquote}
+\usepackage{listings}
+
+\lstset{basicstyle=\ttfamily,breaklines=true,showstringspaces=false}
+
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+language=Python,
+basicstyle=\ttfamily,
+otherkeywords={self},             % Add keywords here
+keywordstyle=\ttb\color{deepblue},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttb\color{deepred},    % Custom highlighting style
+stringstyle=\color{deepgreen},
+showstringspaces=false            % 
+}}
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+% Python for external files
+\newcommand\pythonexternal[2][]{{
+\pythonstyle
+\lstinputlisting[#1]{#2}}}
+
+% Python for inline
+\newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
+
+% Provide translations for blocks and primitives
+\uselanguage{spanish}
+\languagepath{spanish}
+\deftranslation[to=spanish]{Example}{Ejemplo}
+\deftranslation[to=spanish]{Definition}{Definición}
+
+\title{Ayudantía Lenguajes de Programación}
+\subtitle{PLY: Python Lex-Yacc}
+\author{Rodolfo Castillo Mateluna}
+\institute{U. Técnica Federico Santa María}
+\date{Segundo semestre académico, 2017}
+
+\begin{document}
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	
+	
+	\begin{frame}{Disclaimer}
+	\justifying
+		Gran parte del contenido de esta presentación está basado en la documentación oficial de \texttt{PLY}.
+		
+		\medskip
+		Esta puede ser encontrada en \href{www.dabeaz.com/ply/ply.html}{www.dabeaz.com/ply/ply.html}
+	\end{frame}
+	
+	
+	\begin{frame}{Requerimientos}
+	\begin{itemize}
+		\item Python (\textgreater\ 2.6)
+		\item Conocimiento general de \textbf{gramáticas formales}
+		\item Expresiones regulares
+	\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Lex}
+		\begin{definition}
+			Un \emph{lexer} o ``analizador léxico" (crudamente traducido al español) es un programa que ejecuta el proceso de convertir una secuencia de caracteres en una secuencia de \emph{strings} con un significado asociado.
+		\end{definition}
+		
+		\begin{itemize}
+			\item\texttt{Lex} es un programa que genera \emph{lexers}. Es originalmente una librería con \emph{bindings} para el lenguaje de programación \texttt{C}.
+			\item Comunmente es acompañado de \texttt{Yacc}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Yacc (\emph{Yet Another Compiler-Compiler})}
+		\begin{definition}
+			\emph{Parsing} o ``análisis sintáctico" es el proceso de analizar un \emph{string} que sigue las reglas de una \textbf{gramática formal}
+		\end{definition}
+	\end{frame}
+	
+	\begin{frame}{Yacc (\emph{Yet Another Compiler-Compiler})}
+		\begin{definition}
+			La \textbf{derivación} (\emph{derivation}) de un \emph{string} es la secuencia de reglas de una gramática formal aplicadas para transformar el símbolo inicial en el \emph{string}
+		\end{definition}
+		\justifying
+		Más adelante veremos que es muy importante tener en consideración si el proceso de análisis sintáctico se realiza como una \emph{leftmost} o \emph{rightmost derivation}
+	\end{frame}
+	
+	\begin{frame}{Yacc (\emph{Yet Another Compiler-Compiler})}
+		\begin{definition}
+			Un \emph{LALR parser} (\emph{Look ahead LR parser}) es un tipo de analizador sintáctico optimizado en base a un \emph{LR parser} (\emph{Left to right, rightmost derivation})
+		\end{definition}
+	\end{frame}
+	
+	\begin{frame}{Yacc (\emph{Yet Another Compiler-Compiler})}
+		\textbf{Yacc} es un \emph{LALR parser generator}. En otras palabras, es un generador de \emph{parsers}. Un \emph{parser} es un programa que realiza análisis sintáctico. Entonces, es correcto decir que Yacc, es un programa que genera un programa para analizar \emph{strings} potencialmente pertenecientes a un lenguaje generado por una gramática formal.
+	\end{frame}
+	
+	\begin{frame}{Yacc (\emph{Yet Another Compiler-Compiler})}
+		\textbf{Yacc} es un \emph{LALR parser generator}. En otras palabras, es un generador de \emph{parsers}. Un \emph{parser} es un programa que realiza análisis sintáctico. Entonces, es correcto decir que Yacc, es un programa que genera un programa para analizar \emph{strings} potencialmente pertenecientes a un lenguaje generado por una gramática formal.
+		
+		\medskip
+		\centering
+		¡Ahora \emph{Compiler Compiler} tiene sentido!
+	\end{frame}
+	
+	\begin{frame}{A lo que nos convoca}
+		\begin{itemize}
+			\item PLY es una librería que implementa Lex+Yacc en Python
+			\item Inicialmente fue desarrollada para un curso de compiladores
+			\item PLY utiliza \textbf{reflexión} para generar \emph{lexers} y \emph{parsers}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{\texttt{lex.py}}
+		Conociendo la definición de un \emph{lexer} y la funcionalidad del programa \emph{Lex}, a continuación se mostrarán ejemplos de uso de su implementación en \emph{Python}
+		
+		\begin{alertblock}{Achtung!}
+		Se utilizarán los mismos ejemplos que se pueden encontrar en la documentación	
+		\end{alertblock}
+	\end{frame}
+	
+\begin{frame}[fragile]{\texttt{lex.py}}
+Suponga que está haciendo un lenguaje de programación y un usuario ingresa el siguiente string:
+
+\begin{lstlisting}
+           x = 3 + 42 * (s - t)
+\end{lstlisting}
+
+Un \textbf{tokenizer} o \emph{lexer} separará el string en \emph{tokens} uno por uno:
+
+\begin{lstlisting}
+'x','=','3','+','42','*','(','s','-','t',')'
+\end{lstlisting}
+
+Más específicamente, el \emph{string} será separado en pares de la forma \emph{(tipo, valor)}:
+
+\begin{lstlisting}
+('ID','x'), ('EQUALS','='), ('NUMBER','3'), 
+('PLUS','+'), ('NUMBER','42'),('TIMES','*'),
+('LPAREN','('), ('ID','s'), ('MINUS','-'),
+('ID','t'), ('RPAREN',')'
+\end{lstlisting}
+
+\end{frame}
+	
+	\begin{frame}{{\texttt{lex.py}}}
+		La identificación del tipo de un \emph{token} es típicamente definida por una serie de expresiones regulares. A continuación se mostrará como puede ser logrado con \texttt{lex.py} en \href{run:calclex.py}{\texttt{calclex.py}}
+	\end{frame}
+	
+\begin{frame}[fragile]{Entendiendo \texttt{calclex.py}}
+\justifying
+Un \emph{lexer} debe proveer una lista de \emph{tokens} que definen todos los posibles tipos que deben ser reconocidos. El resultado del proceso de \emph{tokenization} es utilizado por \texttt{yacc.py}
+
+\begin{example}
+\begin{lstlisting}[language=Python]
+tokens = (
+   'NUMBER',
+   'PLUS',
+   'MINUS',
+   'TIMES',
+   'DIVIDE',
+   'LPAREN',
+   'RPAREN',
+)
+\end{lstlisting}			
+\end{example}
+
+\end{frame}
+
+\begin{frame}{Entendiendo \texttt{calclex.py}}
+	Cada \emph{token} es definido mediante una expresión regular compatible con el módulo \texttt{re} de \emph{Python}. Cada una de estas reglas están definidas en declaraciones con el prefijo especial \texttt{t\_}
+\end{frame}
+
+\begin{frame}[fragile]{Entendiendo \texttt{calclex.py}}
+	Si la especificación de un \emph{token} es simple, es tan sencillo como declarar una variable de la forma \texttt{t\_<TOKEN> = <RE>}
+	
+\begin{example}
+\begin{python}
+t_PLUS = r'\+'
+\end{python}
+\end{example}
+
+	En el ejemplo estamos diciendo que el \emph{token} \texttt{`PLUS'} está definido por la expresión regular \texttt{`\textbackslash+'}
+\end{frame}
+
+\begin{frame}[fragile]{Entendiendo \texttt{calclex.py}}
+	Si la especificación de un \emph{token} es compleja, se puede declarar una función que trabaje con el \emph{token} extraído desde el \emph{input}. La función deberá llamarse \texttt{t\_<TOKEN>}, recibirá un argumento (el \emph{token} capturado) y retornará el \emph{token} con las modificaciones pertinentes. Es importante destacar que la expresión regular que define al \emph{token} es definida en el \emph{docstring} de la función
+	
+\begin{example}
+\begin{python}
+def t_NUMBER(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+\end{python}	
+\end{example}
+
+\begin{alertblock}{Importante!}
+El \emph{token} debe ser retornado o será descartado
+\end{alertblock}
+
+\end{frame}
+
+\begin{frame}{Lea la documentación!}
+\begin{itemize}
+	\item Internamente \texttt{lex.py} usa la \emph{flag} \texttt{re.VERBOSE} en el uso el uso del módulo \texttt{re}. Esto significa que se aceptan comentarios con el símbolo \texttt{\#} y los espacios se descartan, por lo que en caso que su expresión regular necesite indicar explícitamente uno de estos caracteres, debe indicarlos como \texttt{[\#]} y \texttt{\textbackslash s} respectivamente
+
+	\item Revise en la documentación la manera apropiada de definir palabras reservadas
+\end{itemize}
+
+\end{frame}
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
