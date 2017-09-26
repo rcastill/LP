@@ -1,0 +1,194 @@
+\documentclass{beamer}
+\usetheme{Madrid}
+\useoutertheme{infolines}
+\beamertemplatenavigationsymbolsempty
+\usepackage[utf8]{inputenc}
+\usepackage{ragged2e} % \justifying
+\usepackage{graphicx}
+\usepackage{listings}
+\graphicspath{{\files}}
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+\usepackage{upquote}
+\usepackage{listings}
+
+\lstset{mathescape,basicstyle=\ttfamily,breaklines=true,showstringspaces=false,literate={á}{{\'a}}1{é}{{\'e}}1{í}{{\'i}}1{ó}{{\'o}}1{ú}{{\'u}}1{ü}{{\"u}}1}
+
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+language=Python,
+basicstyle=\ttfamily,
+otherkeywords={self},             % Add keywords here
+keywordstyle=\ttb\color{deepblue},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttb\color{deepred},    % Custom highlighting style
+stringstyle=\color{deepgreen},
+showstringspaces=false            % 
+}}
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+% Python for external files
+\newcommand\pythonexternal[2][]{{
+\pythonstyle
+\lstinputlisting[#1]{#2}}}
+
+% Python for inline
+\newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
+
+% Provide translations for blocks and primitives
+\uselanguage{spanish}
+\languagepath{spanish}
+\deftranslation[to=spanish]{Example}{Ejemplo}
+\deftranslation[to=spanish]{Definition}{Definición}
+
+\title[Lingua Franca]{Ayudantía Lenguajes de Programación}
+\subtitle{\emph{Lingua Franca}}
+\author[Rodolfo Castillo Mateluna]{\small Rodolfo Castillo Mateluna}
+\institute[DI UTFSM]{U. Técnica Federico Santa María\\
+Departamento de Informática}
+\date{Segundo semestre 2017}
+
+\setbeamertemplate{blocks}[default]
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{section in toc}{\inserttocsection}
+\setbeamertemplate{subsection in toc}[square]
+
+\begin{document}
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber{} / \inserttotalframenumber
+    \hspace*{1em}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+	\begin{frame}[noframenumbering,plain]
+		\titlepage
+	\end{frame}
+	
+%	\begin{frame}[noframenumbering,plain]{Contenidos}
+%		\tableofcontents
+%	\end{frame}
+	
+	\begin{frame}{Track list}
+		\begin{enumerate}
+			\item Entry point
+			\item Hello World!
+				\begin{itemize}
+					\item Manpage (\texttt{printf})
+				\end{itemize}
+			\item Compilación básica (\texttt{gcc})
+			\item Variables (\emph{diapos profesor})
+			\item Funciones
+			\item \texttt{typedef}
+		\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}{Tipos de datos}
+	\begin{block}{Primitivos}
+		\begin{itemize}
+			\item Tipos básicos
+			\item \texttt{sizeof}
+			\item \textbf{En C nunca asuma nada excepto que \texttt{sizeof(char) == 1}}
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Structs}
+		\begin{itemize}
+			\item Memoria contigua!
+			\item \texttt{typedef}
+			\item Structs anidados
+			\item Structs anónimos
+			\item Notación (.) y (-\textgreater)
+		\end{itemize}
+	\end{block}
+	\end{frame}
+	
+	\begin{frame}{Tipos de datos}
+	\begin{block}{Unions}
+		\begin{itemize}
+			\item Memoria compartida!
+			\item Analogía con structs
+			\item Strongly typed? (\emph{ver wiki})
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Array}
+		\begin{itemize}
+			\item Declaración y definición
+			\item Qué es realmente un \emph{array}?
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Strings}
+		\begin{itemize}
+			\item Un \emph{array} particular
+		\end{itemize}
+	\end{block}
+	\end{frame}
+	
+	\begin{frame}{Tipos de datos: Punteros! \tiny(\emph{you either love them or... you'll be forced to use them anyway :D)}}
+		\begin{itemize}
+			\item Son una variable como cualquier otra! (no se confunda innecesariamente)
+			\item Aritmética (y magia negra del estilo)
+			\item Visualización de \emph{layout} y arquitectura de HW
+			\item \texttt{malloc}, \texttt{free} e importancia de \texttt{sizeof}
+			\item Punteros a función
+			\begin{itemize}
+				\item \texttt{typedef}
+				\item Ejemplo: \emph{Pipeline}
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+	
+    \begin{frame}{Anexo}
+    	\begin{itemize}
+    		\item Makefile
+    		\item Modularización
+    		\begin{itemize}
+	    		\item \emph{Header guard}
+    		\end{itemize}
+    	\end{itemize}
+    \end{frame}
+    
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
