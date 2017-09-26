@@ -1,0 +1,576 @@
+Created by PLY version 3.10 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> statement
+Rule 1     statement -> NAME EQUALS expression
+Rule 2     statement -> expression
+Rule 3     statement -> struct
+Rule 4     struct -> STRUCT NAME LBRACE assignmentlst RBRACE
+Rule 5     struct -> STRUCT NAME LBRACE RBRACE
+Rule 6     assignmentlst -> assignmentlst COMA NAME EQUALS expression
+Rule 7     assignmentlst -> NAME EQUALS expression
+Rule 8     expression -> expression PLUS expression
+Rule 9     expression -> expression MINUS expression
+Rule 10    expression -> expression TIMES expression
+Rule 11    expression -> expression DIVIDE expression
+Rule 12    expression -> MINUS expression
+Rule 13    expression -> LPAREN expression RPAREN
+Rule 14    expression -> NUMBER
+Rule 15    expression -> NAME
+
+Terminals, with rules where they appear
+
+COMA                 : 6
+DIVIDE               : 11
+EQUALS               : 1 6 7
+LBRACE               : 4 5
+LPAREN               : 13
+MINUS                : 9 12
+NAME                 : 1 4 5 6 7 15
+NUMBER               : 14
+PLUS                 : 8
+RBRACE               : 4 5
+RPAREN               : 13
+STRUCT               : 4 5
+TIMES                : 10
+error                : 
+
+Nonterminals, with rules where they appear
+
+assignmentlst        : 4 6
+expression           : 1 2 6 7 8 8 9 9 10 10 11 11 12 13
+statement            : 0
+struct               : 3
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . statement
+    (1) statement -> . NAME EQUALS expression
+    (2) statement -> . expression
+    (3) statement -> . struct
+    (8) expression -> . expression PLUS expression
+    (9) expression -> . expression MINUS expression
+    (10) expression -> . expression TIMES expression
+    (11) expression -> . expression DIVIDE expression
+    (12) expression -> . MINUS expression
+    (13) expression -> . LPAREN expression RPAREN
+    (14) expression -> . NUMBER
+    (15) expression -> . NAME
+    (4) struct -> . STRUCT NAME LBRACE assignmentlst RBRACE
+    (5) struct -> . STRUCT NAME LBRACE RBRACE
+
+    NAME            shift and go to state 2
+    MINUS           shift and go to state 5
+    LPAREN          shift and go to state 6
+    NUMBER          shift and go to state 7
+    STRUCT          shift and go to state 8
+
+    statement                      shift and go to state 1
+    expression                     shift and go to state 3
+    struct                         shift and go to state 4
+
+state 1
+
+    (0) S' -> statement .
+
+
+
+state 2
+
+    (1) statement -> NAME . EQUALS expression
+    (15) expression -> NAME .
+
+    EQUALS          shift and go to state 9
+    PLUS            reduce using rule 15 (expression -> NAME .)
+    MINUS           reduce using rule 15 (expression -> NAME .)
+    TIMES           reduce using rule 15 (expression -> NAME .)
+    DIVIDE          reduce using rule 15 (expression -> NAME .)
+    $end            reduce using rule 15 (expression -> NAME .)
+
+
+state 3
+
+    (2) statement -> expression .
+    (8) expression -> expression . PLUS expression
+    (9) expression -> expression . MINUS expression
+    (10) expression -> expression . TIMES expression
+    (11) expression -> expression . DIVIDE expression
+
+    $end            reduce using rule 2 (statement -> expression .)
+    PLUS            shift and go to state 10
+    MINUS           shift and go to state 11
+    TIMES           shift and go to state 12
+    DIVIDE          shift and go to state 13
+
+
+state 4
+
+    (3) statement -> struct .
+
+    $end            reduce using rule 3 (statement -> struct .)
+
+
+state 5
+
+    (12) expression -> MINUS . expression
+    (8) expression -> . expression PLUS expression
+    (9) expression -> . expression MINUS expression
+    (10) expression -> . expression TIMES expression
+    (11) expression -> . expression DIVIDE expression
+    (12) expression -> . MINUS expression
+    (13) expression -> . LPAREN expression RPAREN
+    (14) expression -> . NUMBER
+    (15) expression -> . NAME
+
+    MINUS           shift and go to state 5
+    LPAREN          shift and go to state 6
+    NUMBER          shift and go to state 7
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 14
+
+state 6
+
+    (13) expression -> LPAREN . expression RPAREN
+    (8) expression -> . expression PLUS expression
+    (9) expression -> . expression MINUS expression
+    (10) expression -> . expression TIMES expression
+    (11) expression -> . expression DIVIDE expression
+    (12) expression -> . MINUS expression
+    (13) expression -> . LPAREN expression RPAREN
+    (14) expression -> . NUMBER
+    (15) expression -> . NAME
+
+    MINUS           shift and go to state 5
+    LPAREN          shift and go to state 6
+    NUMBER          shift and go to state 7
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 16
+
+state 7
+
+    (14) expression -> NUMBER .
+
+    PLUS            reduce using rule 14 (expression -> NUMBER .)
+    MINUS           reduce using rule 14 (expression -> NUMBER .)
+    TIMES           reduce using rule 14 (expression -> NUMBER .)
+    DIVIDE          reduce using rule 14 (expression -> NUMBER .)
+    $end            reduce using rule 14 (expression -> NUMBER .)
+    RPAREN          reduce using rule 14 (expression -> NUMBER .)
+    RBRACE          reduce using rule 14 (expression -> NUMBER .)
+    COMA            reduce using rule 14 (expression -> NUMBER .)
+
+
+state 8
+
+    (4) struct -> STRUCT . NAME LBRACE assignmentlst RBRACE
+    (5) struct -> STRUCT . NAME LBRACE RBRACE
+
+    NAME            shift and go to state 17
+
+
+state 9
+
+    (1) statement -> NAME EQUALS . expression
+    (8) expression -> . expression PLUS expression
+    (9) expression -> . expression MINUS expression
+    (10) expression -> . expression TIMES expression
+    (11) expression -> . expression DIVIDE expression
+    (12) expression -> . MINUS expression
+    (13) expression -> . LPAREN expression RPAREN
+    (14) expression -> . NUMBER
+    (15) expression -> . NAME
+
+    MINUS           shift and go to state 5
+    LPAREN          shift and go to state 6
+    NUMBER          shift and go to state 7
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 18
+
+state 10
+
+    (8) expression -> expression PLUS . expression
+    (8) expression -> . expression PLUS expression
+    (9) expression -> . expression MINUS expression
+    (10) expression -> . expression TIMES expression
+    (11) expression -> . expression DIVIDE expression
+    (12) expression -> . MINUS expression
+    (13) expression -> . LPAREN expression RPAREN
+    (14) expression -> . NUMBER
+    (15) expression -> . NAME
+
+    MINUS           shift and go to state 5
+    LPAREN          shift and go to state 6
+    NUMBER          shift and go to state 7
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 19
+
+state 11
+
+    (9) expression -> expression MINUS . expression
+    (8) expression -> . expression PLUS expression
+    (9) expression -> . expression MINUS expression
+    (10) expression -> . expression TIMES expression
+    (11) expression -> . expression DIVIDE expression
+    (12) expression -> . MINUS expression
+    (13) expression -> . LPAREN expression RPAREN
+    (14) expression -> . NUMBER
+    (15) expression -> . NAME
+
+    MINUS           shift and go to state 5
+    LPAREN          shift and go to state 6
+    NUMBER          shift and go to state 7
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 20
+
+state 12
+
+    (10) expression -> expression TIMES . expression
+    (8) expression -> . expression PLUS expression
+    (9) expression -> . expression MINUS expression
+    (10) expression -> . expression TIMES expression
+    (11) expression -> . expression DIVIDE expression
+    (12) expression -> . MINUS expression
+    (13) expression -> . LPAREN expression RPAREN
+    (14) expression -> . NUMBER
+    (15) expression -> . NAME
+
+    MINUS           shift and go to state 5
+    LPAREN          shift and go to state 6
+    NUMBER          shift and go to state 7
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 21
+
+state 13
+
+    (11) expression -> expression DIVIDE . expression
+    (8) expression -> . expression PLUS expression
+    (9) expression -> . expression MINUS expression
+    (10) expression -> . expression TIMES expression
+    (11) expression -> . expression DIVIDE expression
+    (12) expression -> . MINUS expression
+    (13) expression -> . LPAREN expression RPAREN
+    (14) expression -> . NUMBER
+    (15) expression -> . NAME
+
+    MINUS           shift and go to state 5
+    LPAREN          shift and go to state 6
+    NUMBER          shift and go to state 7
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 22
+
+state 14
+
+    (12) expression -> MINUS expression .
+    (8) expression -> expression . PLUS expression
+    (9) expression -> expression . MINUS expression
+    (10) expression -> expression . TIMES expression
+    (11) expression -> expression . DIVIDE expression
+
+    PLUS            reduce using rule 12 (expression -> MINUS expression .)
+    MINUS           reduce using rule 12 (expression -> MINUS expression .)
+    TIMES           reduce using rule 12 (expression -> MINUS expression .)
+    DIVIDE          reduce using rule 12 (expression -> MINUS expression .)
+    $end            reduce using rule 12 (expression -> MINUS expression .)
+    RPAREN          reduce using rule 12 (expression -> MINUS expression .)
+    RBRACE          reduce using rule 12 (expression -> MINUS expression .)
+    COMA            reduce using rule 12 (expression -> MINUS expression .)
+
+  ! PLUS            [ shift and go to state 10 ]
+  ! MINUS           [ shift and go to state 11 ]
+  ! TIMES           [ shift and go to state 12 ]
+  ! DIVIDE          [ shift and go to state 13 ]
+
+
+state 15
+
+    (15) expression -> NAME .
+
+    PLUS            reduce using rule 15 (expression -> NAME .)
+    MINUS           reduce using rule 15 (expression -> NAME .)
+    TIMES           reduce using rule 15 (expression -> NAME .)
+    DIVIDE          reduce using rule 15 (expression -> NAME .)
+    $end            reduce using rule 15 (expression -> NAME .)
+    RPAREN          reduce using rule 15 (expression -> NAME .)
+    RBRACE          reduce using rule 15 (expression -> NAME .)
+    COMA            reduce using rule 15 (expression -> NAME .)
+
+
+state 16
+
+    (13) expression -> LPAREN expression . RPAREN
+    (8) expression -> expression . PLUS expression
+    (9) expression -> expression . MINUS expression
+    (10) expression -> expression . TIMES expression
+    (11) expression -> expression . DIVIDE expression
+
+    RPAREN          shift and go to state 23
+    PLUS            shift and go to state 10
+    MINUS           shift and go to state 11
+    TIMES           shift and go to state 12
+    DIVIDE          shift and go to state 13
+
+
+state 17
+
+    (4) struct -> STRUCT NAME . LBRACE assignmentlst RBRACE
+    (5) struct -> STRUCT NAME . LBRACE RBRACE
+
+    LBRACE          shift and go to state 24
+
+
+state 18
+
+    (1) statement -> NAME EQUALS expression .
+    (8) expression -> expression . PLUS expression
+    (9) expression -> expression . MINUS expression
+    (10) expression -> expression . TIMES expression
+    (11) expression -> expression . DIVIDE expression
+
+    $end            reduce using rule 1 (statement -> NAME EQUALS expression .)
+    PLUS            shift and go to state 10
+    MINUS           shift and go to state 11
+    TIMES           shift and go to state 12
+    DIVIDE          shift and go to state 13
+
+
+state 19
+
+    (8) expression -> expression PLUS expression .
+    (8) expression -> expression . PLUS expression
+    (9) expression -> expression . MINUS expression
+    (10) expression -> expression . TIMES expression
+    (11) expression -> expression . DIVIDE expression
+
+    PLUS            reduce using rule 8 (expression -> expression PLUS expression .)
+    MINUS           reduce using rule 8 (expression -> expression PLUS expression .)
+    $end            reduce using rule 8 (expression -> expression PLUS expression .)
+    RPAREN          reduce using rule 8 (expression -> expression PLUS expression .)
+    RBRACE          reduce using rule 8 (expression -> expression PLUS expression .)
+    COMA            reduce using rule 8 (expression -> expression PLUS expression .)
+    TIMES           shift and go to state 12
+    DIVIDE          shift and go to state 13
+
+  ! TIMES           [ reduce using rule 8 (expression -> expression PLUS expression .) ]
+  ! DIVIDE          [ reduce using rule 8 (expression -> expression PLUS expression .) ]
+  ! PLUS            [ shift and go to state 10 ]
+  ! MINUS           [ shift and go to state 11 ]
+
+
+state 20
+
+    (9) expression -> expression MINUS expression .
+    (8) expression -> expression . PLUS expression
+    (9) expression -> expression . MINUS expression
+    (10) expression -> expression . TIMES expression
+    (11) expression -> expression . DIVIDE expression
+
+    PLUS            reduce using rule 9 (expression -> expression MINUS expression .)
+    MINUS           reduce using rule 9 (expression -> expression MINUS expression .)
+    $end            reduce using rule 9 (expression -> expression MINUS expression .)
+    RPAREN          reduce using rule 9 (expression -> expression MINUS expression .)
+    RBRACE          reduce using rule 9 (expression -> expression MINUS expression .)
+    COMA            reduce using rule 9 (expression -> expression MINUS expression .)
+    TIMES           shift and go to state 12
+    DIVIDE          shift and go to state 13
+
+  ! TIMES           [ reduce using rule 9 (expression -> expression MINUS expression .) ]
+  ! DIVIDE          [ reduce using rule 9 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 10 ]
+  ! MINUS           [ shift and go to state 11 ]
+
+
+state 21
+
+    (10) expression -> expression TIMES expression .
+    (8) expression -> expression . PLUS expression
+    (9) expression -> expression . MINUS expression
+    (10) expression -> expression . TIMES expression
+    (11) expression -> expression . DIVIDE expression
+
+    PLUS            reduce using rule 10 (expression -> expression TIMES expression .)
+    MINUS           reduce using rule 10 (expression -> expression TIMES expression .)
+    TIMES           reduce using rule 10 (expression -> expression TIMES expression .)
+    DIVIDE          reduce using rule 10 (expression -> expression TIMES expression .)
+    $end            reduce using rule 10 (expression -> expression TIMES expression .)
+    RPAREN          reduce using rule 10 (expression -> expression TIMES expression .)
+    RBRACE          reduce using rule 10 (expression -> expression TIMES expression .)
+    COMA            reduce using rule 10 (expression -> expression TIMES expression .)
+
+  ! PLUS            [ shift and go to state 10 ]
+  ! MINUS           [ shift and go to state 11 ]
+  ! TIMES           [ shift and go to state 12 ]
+  ! DIVIDE          [ shift and go to state 13 ]
+
+
+state 22
+
+    (11) expression -> expression DIVIDE expression .
+    (8) expression -> expression . PLUS expression
+    (9) expression -> expression . MINUS expression
+    (10) expression -> expression . TIMES expression
+    (11) expression -> expression . DIVIDE expression
+
+    PLUS            reduce using rule 11 (expression -> expression DIVIDE expression .)
+    MINUS           reduce using rule 11 (expression -> expression DIVIDE expression .)
+    TIMES           reduce using rule 11 (expression -> expression DIVIDE expression .)
+    DIVIDE          reduce using rule 11 (expression -> expression DIVIDE expression .)
+    $end            reduce using rule 11 (expression -> expression DIVIDE expression .)
+    RPAREN          reduce using rule 11 (expression -> expression DIVIDE expression .)
+    RBRACE          reduce using rule 11 (expression -> expression DIVIDE expression .)
+    COMA            reduce using rule 11 (expression -> expression DIVIDE expression .)
+
+  ! PLUS            [ shift and go to state 10 ]
+  ! MINUS           [ shift and go to state 11 ]
+  ! TIMES           [ shift and go to state 12 ]
+  ! DIVIDE          [ shift and go to state 13 ]
+
+
+state 23
+
+    (13) expression -> LPAREN expression RPAREN .
+
+    PLUS            reduce using rule 13 (expression -> LPAREN expression RPAREN .)
+    MINUS           reduce using rule 13 (expression -> LPAREN expression RPAREN .)
+    TIMES           reduce using rule 13 (expression -> LPAREN expression RPAREN .)
+    DIVIDE          reduce using rule 13 (expression -> LPAREN expression RPAREN .)
+    $end            reduce using rule 13 (expression -> LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 13 (expression -> LPAREN expression RPAREN .)
+    RBRACE          reduce using rule 13 (expression -> LPAREN expression RPAREN .)
+    COMA            reduce using rule 13 (expression -> LPAREN expression RPAREN .)
+
+
+state 24
+
+    (4) struct -> STRUCT NAME LBRACE . assignmentlst RBRACE
+    (5) struct -> STRUCT NAME LBRACE . RBRACE
+    (6) assignmentlst -> . assignmentlst COMA NAME EQUALS expression
+    (7) assignmentlst -> . NAME EQUALS expression
+
+    RBRACE          shift and go to state 27
+    NAME            shift and go to state 25
+
+    assignmentlst                  shift and go to state 26
+
+state 25
+
+    (7) assignmentlst -> NAME . EQUALS expression
+
+    EQUALS          shift and go to state 28
+
+
+state 26
+
+    (4) struct -> STRUCT NAME LBRACE assignmentlst . RBRACE
+    (6) assignmentlst -> assignmentlst . COMA NAME EQUALS expression
+
+    RBRACE          shift and go to state 29
+    COMA            shift and go to state 30
+
+
+state 27
+
+    (5) struct -> STRUCT NAME LBRACE RBRACE .
+
+    $end            reduce using rule 5 (struct -> STRUCT NAME LBRACE RBRACE .)
+
+
+state 28
+
+    (7) assignmentlst -> NAME EQUALS . expression
+    (8) expression -> . expression PLUS expression
+    (9) expression -> . expression MINUS expression
+    (10) expression -> . expression TIMES expression
+    (11) expression -> . expression DIVIDE expression
+    (12) expression -> . MINUS expression
+    (13) expression -> . LPAREN expression RPAREN
+    (14) expression -> . NUMBER
+    (15) expression -> . NAME
+
+    MINUS           shift and go to state 5
+    LPAREN          shift and go to state 6
+    NUMBER          shift and go to state 7
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 31
+
+state 29
+
+    (4) struct -> STRUCT NAME LBRACE assignmentlst RBRACE .
+
+    $end            reduce using rule 4 (struct -> STRUCT NAME LBRACE assignmentlst RBRACE .)
+
+
+state 30
+
+    (6) assignmentlst -> assignmentlst COMA . NAME EQUALS expression
+
+    NAME            shift and go to state 32
+
+
+state 31
+
+    (7) assignmentlst -> NAME EQUALS expression .
+    (8) expression -> expression . PLUS expression
+    (9) expression -> expression . MINUS expression
+    (10) expression -> expression . TIMES expression
+    (11) expression -> expression . DIVIDE expression
+
+    RBRACE          reduce using rule 7 (assignmentlst -> NAME EQUALS expression .)
+    COMA            reduce using rule 7 (assignmentlst -> NAME EQUALS expression .)
+    PLUS            shift and go to state 10
+    MINUS           shift and go to state 11
+    TIMES           shift and go to state 12
+    DIVIDE          shift and go to state 13
+
+
+state 32
+
+    (6) assignmentlst -> assignmentlst COMA NAME . EQUALS expression
+
+    EQUALS          shift and go to state 33
+
+
+state 33
+
+    (6) assignmentlst -> assignmentlst COMA NAME EQUALS . expression
+    (8) expression -> . expression PLUS expression
+    (9) expression -> . expression MINUS expression
+    (10) expression -> . expression TIMES expression
+    (11) expression -> . expression DIVIDE expression
+    (12) expression -> . MINUS expression
+    (13) expression -> . LPAREN expression RPAREN
+    (14) expression -> . NUMBER
+    (15) expression -> . NAME
+
+    MINUS           shift and go to state 5
+    LPAREN          shift and go to state 6
+    NUMBER          shift and go to state 7
+    NAME            shift and go to state 15
+
+    expression                     shift and go to state 34
+
+state 34
+
+    (6) assignmentlst -> assignmentlst COMA NAME EQUALS expression .
+    (8) expression -> expression . PLUS expression
+    (9) expression -> expression . MINUS expression
+    (10) expression -> expression . TIMES expression
+    (11) expression -> expression . DIVIDE expression
+
+    RBRACE          reduce using rule 6 (assignmentlst -> assignmentlst COMA NAME EQUALS expression .)
+    COMA            reduce using rule 6 (assignmentlst -> assignmentlst COMA NAME EQUALS expression .)
+    PLUS            shift and go to state 10
+    MINUS           shift and go to state 11
+    TIMES           shift and go to state 12
+    DIVIDE          shift and go to state 13
+

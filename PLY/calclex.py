@@ -28,7 +28,7 @@ t_RPAREN  = r'\)'
 # A regular expression rule with some action code
 def t_NUMBER(t):
     r'\d+'
-    t.value = int(t.value)    
+    t.value = int(t.value)
     return t
 
 # Define a rule so we can track line numbers
@@ -44,10 +44,11 @@ def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
-# Build the lexer
-lexer = lex.lex()
 
 if __name__ == '__main__':
+    # Build the lexer
+    lexer = lex.lex()
+
     # Test input
     data = '''
 3 + 4 * 10

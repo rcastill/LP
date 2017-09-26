@@ -36,11 +36,11 @@ t_ignore = " \t"
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += t.value.count("\n")
-    
+
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
-    
+
 # Build the lexer
 import ply.lex as lex
 lexer = lex.lex()
@@ -98,11 +98,13 @@ def p_error(t):
     print("Syntax error at '%s'" % t.value)
 
 import ply.yacc as yacc
-parser = yacc.yacc()
 
-while True:
-    try:
-        s = input('calc > ')   # Use raw_input on Python 2
-    except EOFError:
-        break
-    parser.parse(s)
+if __name__ == '__main__':
+    parser = yacc.yacc()
+
+    while True:
+        try:
+            s = input('calc > ')   # Use raw_input on Python 2
+        except EOFError:
+            break
+        parser.parse(s)

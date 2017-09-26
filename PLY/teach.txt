@@ -1,0 +1,16 @@
+statement  : NAME EQUALS expression
+           | expression
+
+expression : expression PLUS expression
+		   | expression MINUS expression
+		   | expression TIMES expression
+		   | expression DIVIDE expression
+		   | MINUS expression %prec UMINUS
+		   | LPAREN expression RPAREN
+		   | NUMBER
+		   | NAME
+
+
+a12 = (2 - 3) * 10
+'a12' '=' expression
+'a12' '=' expression '*' expression

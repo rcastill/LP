@@ -75,17 +75,17 @@ def p_statement_assign(t):
     'statement : NAME EQUALS expression'
     if t[1] not in names:
         names.append(t[1])
-    f.write('{0} = {1}\n'.format(t[1], t[3]))
+    t[0] = '{0} = {1}\n'.format(t[1], t[3])
 
 def p_statement_expr(t):
     'statement : expression'
     if t[1] != None:
-        f.write('{0}\n'.format(t[1]))
+        t[0] = '{0}\n'.format(t[1])
 
 def p_statement_struct(t):
     'statement : struct'
     if t[1] != None:
-        f.write('{0}\n'.format(t[1]))
+        t[0] = '{0}\n'.format(t[1])
 
 def p_struct(t):
     '''struct : STRUCT NAME LBRACE assignmentlst RBRACE
@@ -138,11 +138,17 @@ def p_error(t):
     print("Syntax error at '%s'" % t.value)
 
 import ply.yacc as yacc
-parser = yacc.yacc()
 
-while True:
-    try:
-        s = input('calc > ')   # Use raw_input on Python 2
-    except EOFError:
-        break
-    parser.parse(s)
+if __name__ == '__main__':
+    parser = yacc.yacc()
+    output = open('output.py', 'w')
+
+    while True:
+        try:
+            s = input('calc > ')   # Use raw_input on Python 2
+        except EOFError:
+            break
+        result = parser.parse(s)
+        # write to file
+        if result is not None:
+            output.write(result)

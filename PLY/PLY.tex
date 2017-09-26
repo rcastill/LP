@@ -1,5 +1,5 @@
 \documentclass[pdf]{beamer}
-\usetheme{Rochester}
+\usetheme{Madrid}
 \beamertemplatenavigationsymbolsempty
 \usepackage[utf8]{inputenc}
 \usepackage{ragged2e} % \justifying
@@ -17,7 +17,7 @@
 \usepackage{upquote}
 \usepackage{listings}
 
-\lstset{basicstyle=\ttfamily,breaklines=true,showstringspaces=false}
+\lstset{mathescape,basicstyle=\ttfamily,breaklines=true,showstringspaces=false,literate={á}{{\'a}}1{é}{{\'e}}1{í}{{\'i}}1{ó}{{\'o}}1{ú}{{\'u}}1{ü}{{\"u}}1}
 
 % Python style for highlighting
 \newcommand\pythonstyle{\lstset{
@@ -53,14 +53,38 @@ showstringspaces=false            %
 \deftranslation[to=spanish]{Example}{Ejemplo}
 \deftranslation[to=spanish]{Definition}{Definición}
 
-\title{Ayudantía Lenguajes de Programación}
+\title[PLY: Python Lex-Yacc]{Ayudantía Lenguajes de Programación}
 \subtitle{PLY: Python Lex-Yacc}
 \author{Rodolfo Castillo Mateluna}
-\institute{U. Técnica Federico Santa María}
-\date{Segundo semestre académico, 2017}
+\institute[DI UTFSM]{U. Técnica Federico Santa María\\Departamento de Informática}
+\date[Segundo semestre 2017]{Segundo semestre académico, 2017}
+
+\setbeamertemplate{blocks}[default]
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{section in toc}{\inserttocsection}
+\setbeamertemplate{subsection in toc}[square]
 
 \begin{document}
-	\begin{frame}
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber{} / \inserttotalframenumber
+    \hspace*{1em}
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+	\begin{frame}[noframenumbering,plain]
 		\titlepage
 	\end{frame}
 	
@@ -104,7 +128,7 @@ showstringspaces=false            %
 			La \textbf{derivación} (\emph{derivation}) de un \emph{string} es la secuencia de reglas de una gramática formal aplicadas para transformar el símbolo inicial en el \emph{string}
 		\end{definition}
 		\justifying
-		Más adelante veremos que es muy importante tener en consideración si el proceso de análisis sintáctico se realiza como una \emph{leftmost} o \emph{rightmost derivation}
+		Es muy importante tener en consideración si el proceso de análisis sintáctico se realiza como una \emph{leftmost} o \emph{rightmost derivation}
 	\end{frame}
 	
 	\begin{frame}{Yacc (\emph{Yet Another Compiler-Compiler})}
@@ -131,6 +155,10 @@ showstringspaces=false            %
 			\item Inicialmente fue desarrollada para un curso de compiladores
 			\item PLY utiliza \textbf{reflexión} para generar \emph{lexers} y \emph{parsers}
 		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Instalación}
+		Existen varias maneras de instalar paquetes en \texttt{Python}. La más utilizada (a veces repudiada por \emph{sysadmins} puristas) es mediante el gestor de paquetes \texttt{pip}. Para usarlo de manera correcta se recomienda el uso de \texttt{virtualenv}. Para más información sobre este tópico, investigue en internet o siga los pasos en el vídeo de esta ayudantía.
 	\end{frame}
 	
 	\begin{frame}{\texttt{lex.py}}
@@ -230,6 +258,10 @@ El \emph{token} debe ser retornado o será descartado
 	\item Revise en la documentación la manera apropiada de definir palabras reservadas
 \end{itemize}
 
+\end{frame}
+
+\begin{frame}{Esto no es todo!}
+	Hasta ahora hemos visto como hacer el proceso de análisis léxico con \texttt{PLY}, pero eso es sólo la mitad del trabajo. Ahora hace falta pasar por el análisis sintáctico. De esto se encargará \texttt{yacc.py}
 \end{frame}
 
 \end{document}
