@@ -1,0 +1,337 @@
+\documentclass[letterpaper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{upquote}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fourier}
+
+\usepackage{geometry}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\newcommand{\nl}[1]{\vskip#1ex\noindent}
+\setlength{\parskip}{1em}
+\setlength\parindent{0pt}
+
+\lstset{
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\title{Tarea \#1\\Lenguajes de Programación INF-253\\ \textit{Playing God}\\
+\tiny{This is actually happening}}
+\author{{\small Mauricio Araya} \\
+    \texttt{{\small maray@inf.utfsm.cl}} \and
+    {\small Rodolfo Castillo}\\
+    \texttt{{\small rodolfo.castillo.13@sansano.usm.cl}}
+    \and {\small Benjamín Gautier} \\
+    \texttt{{\small benjamin.gautier.14@sansano.usm.cl}}
+    \and {\small Andrés Tapia} \\
+    \texttt{{\small andres.tapia@sansano.usm.cl}}
+    \and {\small Marcelo Jara}\\
+    \texttt{{\small \texttt{marcelo.jara.13@sansano.usm.cl}}} }
+
+\date{Segundo semestre académico, 2017}
+
+\begin{document}
+\maketitle
+\section{Objetivos}
+\begin{itemize}
+    \item
+        Reforzar los conocimientos y el manejo de conceptos de un lenguaje Imperativo.
+
+    \item
+        Experimentar con el uso de punteros a funciones.
+    
+    \item
+        Que el estudiante use ligado de funciones dinámico (en \emph{runtime}).
+\end{itemize}
+
+\section{Tarea}
+
+La tarea consiste en implementar una simulación de comportamiento de células en un ambiente acotado. El concepto es similar a un autómata celular\footnote{\href{https://en.wikipedia.org/wiki/Cellular\_automaton}{https://en.wikipedia.org/wiki/Cellular\_automaton}}, sin embargo, se diferencian en que el último utiliza el estado de las células vecinas para evolucionar, mientras que la simulación requerida evolucionará en función de eventos universales.
+
+\subsection{Definiciones}
+
+A continuación se presentarán conceptos claves para la realización de la tarea.
+
+\paragraph{Universo}
+Al igual que un autómata celular, el universo estará representado por una grilla cuadricular de dimensiones definidas previamente a la ejecución del simulador. Esta cuadrícula será estática, es decir, no aumentará ni disminuirá su tamaño mientras la simulación esté siendo ejecutada.
+
+\paragraph{Evento universal} 
+Los eventos universales son los estímulos que cada célula presente en el universo recibirá para modificar su estado (posicionamiento en el universo). Existen 5 eventos definidos y a falta de creatividad de los creadores, son identificados como \texttt{a, b, c, d, e}.
+
+\paragraph{Estado universal}
+Se define como un estado global, es decir, un \emph{snapshot} al estado actual del universo. En otras palabras, el conjunto de los estados individuales de cada célula en el universo (un estado universal puede ser considerado como una instancia de universo).
+
+\paragraph{Característica genética}
+El nombre puede sonar complejo, sin embargo, puede verlo como una personalidad. Una característica genética decide cómo reaccionar (i.e. cómo alterar el estado de una célula) ante un evento universal. En el universo existen sólo 4 características genéticas, sin embargo, estas son un subconjuto que puede ser escogido dinámicamente antes del comienzo de la simulación. Para normalizar su identificación, se identificarán como \texttt{A, T, C, G}.
+
+\paragraph{Célula}
+Una célula estará definida por su posición \texttt{(x, y)} en el universo y una 5-tupla con las características genéticas que tiene asociadas a cada evento universal \texttt{a, b, c, d, e} respectivamente, e.g. \texttt{(A, A, T, C, C)} indica que si se recibe el evento universal \texttt{b}, la célula reaccionará con la característica genética \texttt{A}.
+
+\paragraph{Identificación genética}
+Es un valor numérico identificador único por cada célula en el universo. Se puede notar como \texttt{ID(C)}, con \texttt{C} una célula.
+
+\paragraph{Precedencia genética}
+Se dice que una célula \texttt{A} tiene mayor precedencia genética que una célula \texttt{B}, si \texttt{ID(A) < ID(B)}.
+
+\paragraph{Apareamiento}
+El apareamiento es un proceso de procreación que requiere de 2 células y siempre generará una tercera.
+
+\subsection{Reglas de simulación}
+Las reglas de la simulación son:
+
+\begin{enumerate}
+	\item Un cambio en el estado universal sólo puede ser consecuencia de un evento universal. Además, siempre se debe considerar el estado universal previo en su totalidad para hacer la simulación y generar uno nuevo.
+
+	\item Un evento universal debe ser comunicado a cada célula presente en el universo y esta debe actuar (modificar su estado) según la característica genética correspondiente.
+
+	\item Una célula deja de existir si al terminar de procesar un evento, está posicionada fuera de los límites del universo.
+
+	\item Al finalizar el procesamiento de un evento, se deben verificar las colisiones de células, esto es, células que estén presentes en la misma celda. Si este fenómeno ocurre, las 2 células con mayor precedencia genética se aparean y las células restantes (de existir) mueren.
+	
+	\item La generación de células por apareamiento sigue las siguientes reglas:
+	
+	\begin{enumerate}
+	\item La nueva célula tiene la misma posición que sus padres.
+
+	\item La nueva célula tiene la mayor identificación genética que haya sido asociada hasta el momento.
+
+	\item Las características genéticas de la nueva célula es una combinación bien definida de las características genéticas de sus padres. Sean \texttt{A} y \texttt{B} las células procreadoras tales que \texttt{ID(A) < ID(B)} y \texttt{C} la célula generada. Las 3 primeras características genéticas de \texttt{A} serán ubicadas en las posiciones 1, 3 y 5 de la 5-tupla de \texttt{C}, mientras que las 2 últimas características genéticas de \texttt{B} serán ubicadas en las posiciones 2 y 4 de la 5-tupla de \texttt{C}.
+	\end{enumerate}
+	
+	\item La simulación debe ser siempre determinista, esto es, dada una configuración inicial del universo y un conjunto de eventos universales, el estado final del universo debe ser siempre el mismo. \textbf{Hint:} no use funciones impredecibles en la implementación de las características genéticas (i.e. \texttt{random}).
+	
+	
+\end{enumerate}
+
+\subsection{Reglas de implementación}
+
+La tarea tiene un formato bien estructurado, por lo que se definirán ciertas interfaces comunes para normalizar su implementación:
+
+\begin{enumerate}
+	\item El \textbf{universo} puede ser representado de la manera que estime conveniente.
+	\item Los \textbf{eventos universales} serán los caracteres mencionados en su definición.
+	\item Las \textbf{características genéticas} serán representadas por funciones, que reciben como primer argumento un evento universal y retornan una 4-tupla de enteros indicando la cantidad de celdas que la célula debe moverse en las direcciones \emph{izquierda, abajo, arriba, derecha} respectivamente (aunque sea un valor de retorno, este arreglo será pasado por argumento por valor-resultado). La firma de una característica genética es de la forma:
+
+\begin{lstlisting}
+void genetic_behaviour(char, int*);
+\end{lstlisting}
+
+		Como fue definido, las características genéticas que participarán en la simulación serán definidas antes de la ejecución dinámicamente. Para poder lograr esto, se trabajará con librerías dinámicas.
+		
+		\medskip
+		Para formalizar la interfaz de la característica genética, se entregará un archivo \texttt{genetic\_behaviour.h} que contendrá la firma de una característica genética.
+
+		\medskip
+		Algunos recursos que podrían servirle para adentrarse en la materia de cargado dinámico de funciones:
+
+\begin{itemize}
+    \item \href{http://www.cprogramming.com/tutorial/shared-libraries-linux-gcc.html}{http://www.cprogramming.com/tutorial/shared-libraries-linux-gcc.html}
+    \item \href{http://tldp.org/HOWTO/Program-Library-HOWTO/dl-libraries.html}{http://tldp.org/HOWTO/Program-Library-HOWTO/dl-libraries.html}
+\end{itemize}
+
+	\emph{Ejemplo:}
+	
+\begin{lstlisting}
+int movement[4];
+genetic_behaviour('c', movement);
+
+// movement[0] = -1
+// movement[1] = 0
+// movement[2] = 1
+// movement[3] = 0
+\end{lstlisting}
+
+El ejemplo anterior indica que luego de ejecutar la característica genética con el evento universal \texttt{c}, el contenido de \texttt{movement} es \texttt{\{-1, 0, 1, 0\}}, lo que indica que la célula debe moverse una celda a la izquierda y una hacia arriba.
+
+
+	\item Considerando la definición de \textbf{célula}, puede ser representada de la manera que estime conveniente.
+	
+	\item La identificación genética, precedencia y apareamiento pueden ser logradas de la manera que estime conveniente siempre siguiendo las reglas de simulación.
+\end{enumerate}
+
+\subsection{Input}
+Existen 2 instancias de \emph{input} para el simulador:
+
+\begin{enumerate}
+	\item \textbf{Configuración:} es un archivo que se pasará como argumento al simulador que contendrá el estado inicial del universo y las definiciones de las características genéticas. El formato es estructurado de la siguiente manera:
+	\begin{itemize}
+		\item \textbf{Línea 1}: Dimensiones del universo separadas por un espacio. El primer número corresponde al ancho y el segundo al alto.
+		\item \textbf{Líneas 2-5}: Identificación de cada característica genética junto al \emph{path} a la librería dinámica (separados por espacio) que contiene su implementación. Para facilitar lectura, siempre se presentarán en el orden \texttt{A, T, C, G}.
+		\item \textbf{Línea 6}: Número de células iniciales en el universo (\texttt{N}).
+		\item \textbf{Líneas 7-(7 + N - 1):} Definición de cada célula. Esta contempla la 5-tupla de características genéticas (representadas por sus identificadores) y la posición inicial. La identificación genética se asignará automáticamente considerando que las primeras células tienen mayor precedencia genéticas que las últimas definidas.
+	\end{itemize}
+
+\emph{Ejemplo:} Archivo \texttt{init.uni}
+\begin{lstlisting}
+25 25
+A libw.so
+T libx.so
+C liby.so
+G libz.so
+3
+A A T C G 3 0
+C C C T C 9 1
+G C T A A 0 0
+\end{lstlisting}
+
+Note que:
+\begin{enumerate}
+\item El \emph{path} de cada característica genética es sólo un nombre de archivo. Esto indicaría que la librería se encuentra en el mismo directorio que el ejecutable del simulador, sin embargo, podría ser una ruta completa, e.g.: \texttt{A /home/rcastill/LP/libw.so}
+\item Las posiciones parten desde el 0
+\end{enumerate}
+
+	\item \textbf{Eventos:} Una vez la simulación esté corriendo, debe esperar por input de consola, que indicará el evento universal emitido. Los \emph{input} posibles son: \texttt{a|b|c|d|e|q}, dónde \texttt{a-e} son eventos universales y \texttt{q} indica el término de la simulación.
+
+\end{enumerate}
+
+
+\subsection{Output}
+Como la tarea está diseñada para ser determinista, tanto el \emph{input} como el \emph{output} está bien definido y puede ser normalizado. Existen 2 instancias de \emph{output} para el simulador:
+
+\begin{enumerate}
+	\item \textbf{Cada vez que se ingresa un evento universal} el simulador debe imprimir por pantalla el número de células vivas en el universo.
+
+\emph{Ejemplo:}
+\begin{lstlisting}
+a
+3
+a
+3
+b
+3
+c
+2
+e
+3
+\end{lstlisting}
+
+Note que las posiciones impares corresponden al input y las posiciones pares corresponden al output del simulador. \textbf{Es muy importante que siga estas reglas}, i.e.: no agregue un indicador de input tal como \texttt{>}, ya que será penalizado.
+
+\item \textbf{Cuando se termine la simulación}, es decir, cuando el simulador reciba una \texttt{q} por pantalla, el programa deberá escribir a un archivo llamado \texttt{universe.txt} el estado final del universo al terminar la simulación. El formato del archivo \texttt{universe.txt} tendrá forma matricial, representando cada celda del universo como una celda de la matriz. Una celda tendrá valor 0, si no hay una célula en esa posición o el mayor identificador genético (con menor precedencia genética) de las células presentes en esa posición.
+
+\emph{Ejemplo:} Para el estado final de un universo de \texttt{4x4}
+
+\begin{lstlisting}
+0 0 1 0
+0 4 3 0
+0 0 0 0
+\end{lstlisting}
+
+Como se puede ver en el ejemplo, el archivo \texttt{universe.txt} debe representar cada fila separada por un salto de línea y cada columna separada por un espacio (o tabulación).
+\end{enumerate}
+
+
+
+\subsection{Requerimientos}
+Su repositorio debe contar con:
+
+\begin{itemize}
+    \item Un directorio \texttt{src} donde almacenará todo el código fuente necesario de su tarea (.c/.h)
+    \item Un directorio \texttt{bin} donde el resultado de la compilación (el archivo binario) será ubicado
+    \item Un arhivo \texttt{Makefile} para autmatizar la construcción de su software. Puede optar por bonificación si utiliza \texttt{CMake} como herramienta de automatización.
+    \item Un archivo README.md (especificaciones en la sección de \textbf{Condiciones de entrega})
+    \item Archivos necesarios para la ejecución de un caso de prueba, i.e. código fuente (ubicado en el directorio \texttt{src}) de 4 o más librerías dinámicas (características genéticas) con sus respectivas reglas de compilación incluidas en el archivo \texttt{Makefile} (o \texttt{CMakeLists.txt}) y al menos una definición inicial de universo (archivo de configuración) con el que haya hecho pruebas.
+\end{itemize}
+
+\section{Ayuda}
+Se utilizará parte de la ayudantía fijada para el día \textbf{11 de octubre} para una explicación detallada de la tarea.
+
+\section{Bonus}
+\begin{itemize}
+	\item \textbf{Small prize}: Para ganar un bonus en su puntaje obtenido en la tarea, utilice \texttt{CMake}\footnote{\href{https://cmake.org}{https://cmake.org}} para automatizar la compilación de su software en vez de \texttt{Makefile}.
+	\item \textbf{Jackpot:} Represente cada estado universal de la simulación de manera visual (evolución completa de la simulación) en una secuencia de imagenes \texttt{png}.
+\end{itemize}
+
+\pagebreak
+
+\section{Condiciones de entrega}
+La entrega de su tarea debe cumplir las siguientes condiciones:
+
+\begin{itemize}
+    \item
+        Deberán trabajar con la herramienta Git, en la plataforma Gitlab que provee el DI. (\url{https://gitlab.labcomp.cl})
+        
+\textbf{Recuerde crear un nuevo repositorio para esta tarea.}
+        Una vez el plazo de la tarea haya terminado, los ayudantes obtendrán el trabajo realizado
+        desde sus repositorios, para lo cual deberá \textbf{agregar a todos los ayudantes y profesor} (\texttt{rcastill}, \texttt{bgautier} y \texttt{aatapia}, \texttt{mijara}, \texttt{maray}) como miembros (\texttt{master}) de su repositorio.
+
+        Modificaciones después de la entrega significan un atraso de la tarea completa.
+        
+        El nombre de su repositorio debe ser nombrado: 
+        $$\texttt{tarea1LP-2017-2-<user>}$$ donde <user> es el nombre de usuario del DI del estudiante.
+        
+        \textit{\textbf{Un nombre de repositorio con distinto formato significa menos puntos.}}
+
+    \item
+        El repositorio debe contener todos los archivos necesarios para correr su tarea, evite incluir archivos basura.
+
+    \item Archivo README:
+        Usted puede realizar supuestos respecto a su tarea en el archivo README, serán considerados. Recuerde que los supuestos son para simplificar su tarea, \textbf{no para evitar hacer alguna parte de esta}. Además, se pide que se explique la estrategia usada, la cual debe ser concisa y al punto, no se esfuerce con testamentos ya que en lugar de favorecer la nota podrían empeorarla.
+    
+    \item 
+        Deberá incluir un archivo \texttt{Makefile} en el directorio del código fuente. El comando \texttt{make} deberá iniciar la compilación y generación de un archivo ejecutable del programa. Esto es análogo con aquellos que usen \texttt{CMake} considerando sus diferencias de uso.
+    
+    \item
+        La tarea debe entregarse antes de las 23:55 hrs el día \textbf{25 de octubre de 2017}.
+\end{itemize}
+
+%\pagebreak
+
+ \section{Evaluación del código}
+ \begin{itemize}
+    \item 
+        Uso correcto del lenguaje.
+
+    \item
+        Limpieza de recursos alojados en el \texttt{heap}. Considere la utilización de \texttt{Valgrind} para verificar por su cuenta.
+
+    \item
+        Uso de punteros a funciones
+
+    \item
+        Uso de ligado dinámico de funciones.
+        
+    \item 
+        Una parte importante dentro de la vida profesional como desarrollador es la adopción de \textbf{convenciones}, por lo que se exige, para esta ocasión, usar la \textbf{convención del Kernel de Linux}. (\url{https://github.com/torvalds/linux/blob/master/Documentation/process/coding-style.rst})
+
+    \item
+        Orden y modularización.
+\end{itemize}
+
+ \section{Recordatorios}
+ \begin{itemize}
+    \item
+        Su programa debe poder ejecutar en el ambiente del Laboratorio de Computación (LabComp), el cual será usado para revisar las tareas en todo momento.
+
+    \item
+        La tarea se realizará individualmente.
+        
+    \item
+        Si existe una moción para cambiar la fecha de entrega de la tarea esta debe ser realizada al menos una semana antes de la fecha original de entrega. La decisión dependerá del avance en general del curso evidenciado en los repositorios git.
+            
+    \item
+        El enunciado está sujeto a cambios. Si existe algún error en su planteamiento, es responsabilidad de los alumnos notificar para su posterior arreglo.
+
+ \end{itemize}
+
+\end{document}
+
