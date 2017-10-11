@@ -26,13 +26,7 @@ void print_a(struct A a)
 
 int main(int argc, char *argv[])
 {
-    if (argc >= 2) {
-        printf("Hello %s\n", argv[1]);
-    } else {
-        printf("No hay argumento!\n");
-    }
-
-    struct A a = {
+   struct A a = {
         .a = 1,
         .b = 2,
         .c = {

@@ -26,7 +26,7 @@ void __gll_node_init(__gll_node_t node, const void* data, size_t size)
 {
     // Set everything to 0
     node->next = 0;
-    node->next = 0;
+    node->prev = 0;
     node->size = size;
     memcpy(node->data, data, size);
 }
@@ -92,13 +92,13 @@ typedef struct
     char t;
 
     union {
-        char c;
-        short s;
-        int i;
-        long l;
-        float f;
+        char   c;
+        short  s;
+        int    i;
+        long   l;
+        float  f;
         double d;
-        char *S;
+        char*  S;
 
     } d;
     
@@ -166,9 +166,17 @@ int main()
         }
     };
 
+    int integer = 213;
+    
     gll_add(gll, &item1, sizeof(item1));
     gll_add(gll, &item2, sizeof(item2));
+    gll_add(gll, &integer, sizeof(integer));
 
+
+    int dst;
+    memcpy(&dst, gll->head->next->next->data, sizeof(dst));
+    printf("%d\n", dst);
+    
     gll_debug(gll, print_poly);
 
     free(gll);
